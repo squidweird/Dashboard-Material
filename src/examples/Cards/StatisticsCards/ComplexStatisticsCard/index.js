@@ -63,8 +63,9 @@ function ComplexStatisticsCard({ color, title, count, percentage, icon }) {
             color={percentage.color}
           >
             {percentage.amount}
+            &nbsp;{percentage.label}
+            &nbsp;{percentage.text}
           </MDTypography>
-          &nbsp;{percentage.label}
         </MDTypography>
       </MDBox>
     </Card>
@@ -95,20 +96,23 @@ ComplexStatisticsCard.propTypes = {
   ]),
   title: PropTypes.string.isRequired,
   count: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
-  percentage: PropTypes.shape({
-    color: PropTypes.oneOf([
-      "primary",
-      "secondary",
-      "info",
-      "success",
-      "warning",
-      "error",
-      "dark",
-      "white",
-    ]),
-    amount: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
-    label: PropTypes.string,
-  }),
+  percentage: PropTypes.shape([
+    {
+      color: PropTypes.oneOf([
+        "primary",
+        "secondary",
+        "info",
+        "success",
+        "warning",
+        "error",
+        "dark",
+        "white",
+      ]),
+      amount: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+      label: PropTypes.string,
+      text: PropTypes.string,
+    },
+  ]),
   icon: PropTypes.node.isRequired,
 };
 
