@@ -54,6 +54,7 @@ function Dashboard() {
                   amount: "District:",
                   label: "Malkajgiri",
                 }}
+                showMenu="True"
               />
             </MDBox>
           </Grid>
