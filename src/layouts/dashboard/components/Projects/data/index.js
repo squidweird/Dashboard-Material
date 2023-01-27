@@ -72,10 +72,9 @@ export default function data() {
   return {
     columns: [
       { Header: "Name", accessor: "companies", width: "45%", align: "left" },
-      { Header: "budget", accessor: "budget", align: "center" },
       { Header: "Candidate rating", accessor: "completion", align: "center" },
+      { Header: "Party", accessor: "", align: "center" },
     ],
-
     rows: [
       {
         companies: <Company image={logoXD} name="Material UI XD Version" />,
