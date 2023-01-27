@@ -77,7 +77,7 @@ function Dashboard() {
   const [assemblyList, setAssemblyList] = useState([]);
   const [menu, setMenu] = useState(null);
   const [currentAssembly, setCurrentAssembly] = useState("");
-  const [currentAssemblyId, setCurrentAssemblyId] = useState(null);
+  const [currentAssemblyId, setCurrentAssemblyId] = useState(0);
   const [assemblyFactorsData, setAssemblyFactorsData] = useState([]);
   const [candidateData, setCandidateData] = useState([]);
   const [casteData, setCasteData] = useState([]);
