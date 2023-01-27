@@ -17,7 +17,11 @@ import { useState, useEffect } from "react";
 import Grid from "@mui/material/Grid";
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
+import Card from "@mui/material/Card";
+import { DataGrid } from "@mui/x-data-grid";
 import { List, ListItem, Typography } from "@mui/material";
+import MDTypography from "../../components/MDTypography";
+// import MDProgress from "../../components/MDProgress";
 // Material Dashboard 2 React components
 import MDBox from "../../components/MDBox";
 
@@ -39,57 +43,52 @@ import DefaultLineChart from "../../examples/Charts/LineCharts/DefaultLineChart"
 // import PolarChart from "../../examples/Charts/PolarChart";
 // Material Dashboard 2 React Examples
 import PieChart from "../../examples/Charts/PieChart";
-
-<PieChart
-  icon={{ color: "info", component: "leaderboard" }}
-  title="Pie Chart"
-  description="Analytics Insights"
-  chart={{
-    labels: ["Facebook", "Direct", "Organic", "Referral"],
-    datasets: {
-      label: "Projects",
-      backgroundColors: ["info", "primary", "dark", "secondary", "primary"],
-      data: [15, 20, 12, 60],
-    },
-  }}
-/>;
+// import DataTable from "../../examples/Tables/DataTable";
 
 // import SimpleBlogCard from "../../examples/Cards/BlogCards/SimpleBlogCard";
+// function Candidate(name, index) {
+//   return (
+//     <MDBox display="flex" alignItems="center" lineHeight={1}>
+//       <MDTypography variant="button" fontWeight="medium" ml={1} lineHeight={1}>
+//         {index}
+//       </MDTypography>
+//       <MDTypography variant="button" fontWeight="medium" ml={1} lineHeight={1}>
+//         {name}
+//       </MDTypography>
+//     </MDBox>
+//   );
+// }
+// function Party(name) {
+//   return (
+//     <MDTypography variant="caption" color="text" fontWeight="medium">
+//       {name}
+//     </MDTypography>
+//   );
+// }
+
+// function Completion(value) {
+//   return (
+//     <MDBox width="8rem" textAlign="left">
+//       <MDProgress value={value} color="info" variant="gradient" label={false} />
+//     </MDBox>
+//   );
+// }
 function Dashboard() {
   const [assemblyList, setAssemblyList] = useState([]);
-  // const [casteData, setCasteData] = useState({});
+  const [menu, setMenu] = useState(null);
+  const [currentAssembly, setCurrentAssembly] = useState("");
+  const [currentAssemblyId, setCurrentAssemblyId] = useState(null);
+  const [assemblyFactorsData, setAssemblyFactorsData] = useState([]);
+  const [candidateData, setCandidateData] = useState([]);
+  const [casteData, setCasteData] = useState([]);
+
   const fetchData = async () => {
     const data = await fetch("http://3.110.175.216:3000/getAssemblyList");
     const json = await data.json();
     console.log(json.result, "l");
     setAssemblyList(json.result);
   };
-  // async function fetchAssemblyList() {
-  //   await fetch("http://3.110.175.216:3000/getAssemblyList")
-  //     .then((resp) => resp.json())
-  //     .then((resp) => console.log(resp, "ooo"))
-  //     .then((resp) => setTimeout(setAssemblyList(resp.result), 5000));
-  // }
-  // useEffect(() => {
-  //   fetchAssemblyList();
-  //   console.log(assemblList, "kkk");
-  // }, []);
 
-  const [menu, setMenu] = useState(null);
-  const [currentAssembly, setCurrentAssembly] = useState("");
-  const [currentAssemblyId, setCurrentAssemblyId] = useState(1);
-  const [assemblyFactorsData, setAssemblyFactorsData] = useState([]);
-  const [candidateData, setCandidateData] = useState([]);
-  const [casteData, setCasteData] = useState([]);
-  const openMenu = ({ currentTarget }) => setMenu(currentTarget);
-  const closeMenu = () => setMenu(null);
-
-  const handleChange = (e) => {
-    console.log(e.currentTarget.value);
-    setCurrentAssembly(e.currentTarget.outerText);
-    setCurrentAssemblyId(e.currentTarget.value);
-    closeMenu();
-  };
   const fetchAssemblyFactorsData = async () => {
     const data = await fetch(
       `http://3.110.175.216:3000/getAssemblyFactorsData?assembly_id=${currentAssemblyId}`
@@ -118,16 +117,25 @@ function Dashboard() {
   };
 
   useEffect(() => {
-    fetchData().catch(console.error);
-    fetchCandidatesData().catch(console.error);
+    fetchData();
   }, []);
   localStorage.setItem("AssemblyList", JSON.stringify(assemblyList));
+  localStorage.setItem("candidateData", JSON.stringify(candidateData));
 
   useEffect(() => {
-    fetchAssemblyFactorsData().catch(console.error);
-    fetchCandidatesData().catch(console.error);
-    fetchCasteData().catch(console.error);
-  }, [currentAssemblyId]);
+    fetchAssemblyFactorsData();
+    fetchCandidatesData();
+    fetchCasteData();
+  }, [currentAssembly]);
+
+  const openMenu = ({ currentTarget }) => setMenu(currentTarget);
+  const closeMenu = () => setMenu(null);
+
+  const handleChange = (e) => {
+    setCurrentAssembly(e.currentTarget.outerText);
+    setCurrentAssemblyId(e.currentTarget.value);
+    closeMenu();
+  };
 
   const renderMenu = (
     <Menu
@@ -155,6 +163,50 @@ function Dashboard() {
 
   const casteArray = casteData.map((item) => item.caste_name);
   const casteRatioArray = casteData.map((item) => item.caste_ratio);
+
+  const columns = [
+    { headerName: "#", field: "num", width: 50 },
+    { headerName: "Name", field: "candidate", width: 200, align: "left" },
+    { headerName: "Party", field: "party", width: 100, align: "center" },
+    { headerName: "Candidate rating", field: "completion", width: 200, align: "center" },
+  ];
+  // const candiArray = [
+  //   { candidate_name: "Select Constituency", candidate_id: " ", party_name: " " },
+  // ];
+  // const rows = candiArray.map((candi) => ({
+  //   candidate: <Candidate name={candi.candidate_name} index={candi.candidate_id} />,
+  //   party: <Party name={candi.party_name} />,
+  //   completion: <Completion value={Math.floor(Math.random() * 100)} />,
+  // }));
+
+  // const rows = [
+  //   {
+  //     candidate: "Select Constituency",
+  //     index: 1,
+  //     party: "BJP",
+  //     completion: Math.floor(Math.random() * 101),
+  //   },
+  //   { candidate: "Select Constituency", num: 1, party: "BJP" },
+  // ];
+  const candidateArray = JSON.parse(localStorage.getItem("candidateData"));
+  const candiSimple = candidateArray.map((item) => ({
+    num: JSON.stringify(item.candidate_id),
+    candidate: item.candidate_name,
+    party: item.party_name,
+    completion: JSON.stringify(Math.floor(Math.random() * 101)),
+  }));
+
+  console.log(candiSimple, "ASSSS");
+
+  const row2 = candiSimple.map((item) => ({
+    id: item.num,
+    num: item.num,
+    candidate: item.candidate,
+    party: item.party,
+    completion: item.completion,
+  }));
+
+  console.log(row2, "row2");
 
   return (
     <DashboardLayout>
@@ -279,9 +331,14 @@ function Dashboard() {
                   borderRadius="lg"
                   shadow="lg"
                   opacity={1}
-                  p={1}
+                  p={2}
                 >
-                  Lorem Ipsum is simply dummy text of the printing and typesetting industry.
+                  <MDTypography p={0.5} fontWeight="bold" variant="h5" color="white">
+                    MP:{" "}
+                  </MDTypography>
+                  <MDTypography p={0.5} fontWeight="bold" variant="h5" color="white">
+                    MLA:{" "}
+                  </MDTypography>
                 </MDBox>
                 <Typography p={0.5} variant="h5">
                   Key Factors
@@ -301,7 +358,7 @@ function Dashboard() {
                   >
                     {assemblyFactorsData.map((item) => (
                       <ListItem>
-                        <p style={{ fontSize: "12px", padding: "0" }}>{item.description}</p>
+                        <p style={{ fontSize: "13px", padding: "0" }}>{item.description}</p>
                       </ListItem>
                     ))}
                   </List>
@@ -314,25 +371,36 @@ function Dashboard() {
           <Grid container spacing={3}>
             <Grid item xs={12} md={6} lg={8}>
               {/* {candidateData ? <Projects candiDatesData={candidateData} /> : null} */}
-              {console.log(candidateData, "candidata")}
+              <Card>
+                <MDBox display="flex" justifyContent="space-between" alignItems="center" p={3}>
+                  <MDTypography variant="h6" gutterBottom>
+                    Top candidates
+                  </MDTypography>
+                </MDBox>
+                <MDBox>
+                  {candidateData.length > 0 ? (
+                    <DataGrid
+                      rows={row2}
+                      columns={columns}
+                      pageSize={5}
+                      autoHeight
+                      disableSelectionOnClick
+                    />
+                  ) : (
+                    <MDTypography p={3} fontWeight="bold" variant="h5" color="Info">
+                      Select The constituency to View Candidates
+                    </MDTypography>
+                  )}
+                </MDBox>
+              </Card>
             </Grid>
+            {console.log(candidateData)}
             <Grid item xs={12} md={6} lg={4}>
-              {/* <PolarChart
-                title="Caste Equation"
-                chart={{
-                  labels:
-                    casteArray.length > 0 ? casteArray : ["Red", "Green", "Yellow", "Grey", "Blue"],
-                  datasets: {
-                    label: "My First Dataset",
-                    data: casteRatioArray.length > 0 ? casteRatioArray : [11, 16, 7, 3, 14],
-                    backgroundColors: ["info", "primary", "dark", "secondary", "success"],
-                  },
-                }}
-              /> */}
               <PieChart
                 icon={{ color: "info", component: "leaderboard" }}
                 title="Caste Equation"
                 description={`${currentAssembly} Assembly insights`}
+                height="15rem"
                 chart={{
                   labels:
                     casteArray.length > 0 ? casteArray : ["Red", "Green", "Yellow", "Grey", "Blue"],
