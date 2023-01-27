@@ -83,7 +83,7 @@ function Dashboard() {
   const [casteData, setCasteData] = useState([]);
 
   const fetchData = async () => {
-    const data = await fetch("http://3.110.175.216:3000/getAssemblyList");
+    const data = await fetch("https://3.110.175.216:3000/getAssemblyList");
     const json = await data.json();
     console.log(json.result, "l");
     setAssemblyList(json.result);
@@ -91,7 +91,7 @@ function Dashboard() {
 
   const fetchAssemblyFactorsData = async () => {
     const data = await fetch(
-      `http://3.110.175.216:3000/getAssemblyFactorsData?assembly_id=${currentAssemblyId}`
+      `https://3.110.175.216:3000/getAssemblyFactorsData?assembly_id=${currentAssemblyId}`
     );
     const json = await data.json();
     console.log(json.result, "factors data");
@@ -100,7 +100,7 @@ function Dashboard() {
 
   const fetchCandidatesData = async () => {
     const data = await fetch(
-      `http://3.110.175.216:3000/getAssemblyCandidateData?assembly_id=${currentAssemblyId}`
+      `https://3.110.175.216:3000/getAssemblyCandidateData?assembly_id=${currentAssemblyId}`
     );
     const json = await data.json();
     console.log(json.result, "Candidates data");
@@ -109,7 +109,7 @@ function Dashboard() {
 
   const fetchCasteData = async () => {
     const data = await fetch(
-      `http://3.110.175.216:3000/getAssemblyCasteData?assembly_id=${currentAssemblyId}`
+      `https://3.110.175.216:3000/getAssemblyCasteData?assembly_id=${currentAssemblyId}`
     );
     const json = await data.json();
     console.log(json.result, "Caste data");
