@@ -20,6 +20,8 @@ import MenuItem from "@mui/material/MenuItem";
 import Card from "@mui/material/Card";
 import { DataGrid } from "@mui/x-data-grid";
 import { List, ListItem, Typography } from "@mui/material";
+import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
+import MDButton from "components/MDButton";
 import MDTypography from "../../components/MDTypography";
 // import MDProgress from "../../components/MDProgress";
 // Material Dashboard 2 React components
@@ -77,16 +79,35 @@ function Dashboard() {
   const [assemblyList, setAssemblyList] = useState([]);
   const [menu, setMenu] = useState(null);
   const [currentAssembly, setCurrentAssembly] = useState("");
-  const [currentAssemblyId, setCurrentAssemblyId] = useState(1);
+  const [currentAssemblyId, setCurrentAssemblyId] = useState(null);
   const [assemblyFactorsData, setAssemblyFactorsData] = useState([]);
   const [candidateData, setCandidateData] = useState([]);
   const [casteData, setCasteData] = useState([]);
+  const [seatCategory, setSeatcategory] = useState("");
+  const [seatStatus, setSeatStatus] = useState("");
+  const [booths, setBooths] = useState("");
+  const [voters, setVoters] = useState("");
+
+  const placeholder = "Select a constituency";
 
   const fetchData = async () => {
     const data = await fetch("http://3.110.175.216:3000/getAssemblyList");
     const json = await data.json();
     console.log(json.result, "l");
     setAssemblyList(json.result);
+  };
+
+  const fetchAssemblyData = async () => {
+    const data = await fetch(
+      `http://3.110.175.216:3000/getAssemblyData?assembly_id=${currentAssemblyId}`
+    );
+    const json = await data.json();
+    const obj = json.result[0];
+    setSeatcategory(obj.seat_category);
+    setSeatStatus(obj.seat_status);
+    setBooths(obj.total_booth);
+    setVoters(obj.total_voters);
+    console.log(obj, "assembly data xx");
   };
 
   const fetchAssemblyFactorsData = async () => {
@@ -117,15 +138,16 @@ function Dashboard() {
   };
 
   useEffect(() => {
-    fetchData();
+    fetchData().catch(console.error);
   }, []);
   localStorage.setItem("AssemblyList", JSON.stringify(assemblyList));
   localStorage.setItem("candidateData", JSON.stringify(candidateData));
 
   useEffect(() => {
-    fetchAssemblyFactorsData();
-    fetchCandidatesData();
-    fetchCasteData();
+    fetchAssemblyFactorsData().catch(console.error);
+    fetchCandidatesData().catch(console.error);
+    fetchCasteData().catch(console.error);
+    fetchAssemblyData().catch(console.error);
   }, [currentAssembly]);
 
   const openMenu = ({ currentTarget }) => setMenu(currentTarget);
@@ -165,9 +187,9 @@ function Dashboard() {
   const casteRatioArray = casteData.map((item) => item.caste_ratio);
 
   const columns = [
-    { headerName: "#", field: "num", width: 50 },
+    { headerName: "#", field: "num", width: 200 },
     { headerName: "Name", field: "candidate", width: 200, align: "left" },
-    { headerName: "Party", field: "party", width: 100, align: "center" },
+    { headerName: "Party", field: "party", width: 200, align: "center" },
     { headerName: "Candidate rating", field: "completion", width: 200, align: "center" },
   ];
   // const candiArray = [
@@ -211,10 +233,9 @@ function Dashboard() {
   return (
     <DashboardLayout>
       <DashboardNavbar />
-      <MDBox>
-        <Typography variant="button" onClick={openMenu}>
-          Select Constituency
-        </Typography>
+      <MDBox onClick={openMenu}>
+        <MDButton variant="button">Select Constituency</MDButton>
+        <ArrowDropDownIcon fontSize="large" sx={{ verticalAlign: "middle" }} />
         {renderMenu}
       </MDBox>
       <MDBox py={3}>
@@ -225,7 +246,7 @@ function Dashboard() {
                 color="dark"
                 icon="weekend"
                 title="Parliamentary Constituencey"
-                count={currentAssembly}
+                count={currentAssembly.length > 0 ? currentAssembly : placeholder}
                 percentage={{
                   color: "success",
                   amount: "District:",
@@ -239,12 +260,12 @@ function Dashboard() {
               <ComplexStatisticsCard
                 icon="leaderboard"
                 title="Total Voters"
-                count="4,29,418"
+                count={voters.length > 0 ? voters : placeholder}
                 percentage={{
                   color: "success",
-                  amount: "SC Voters:",
-                  label: "12 %",
-                  text: "qwiuweyq",
+                  amount: "",
+                  label: "",
+                  text: "",
                 }}
               />
             </MDBox>
@@ -255,7 +276,7 @@ function Dashboard() {
                 color="success"
                 icon="store"
                 title="Total Booths"
-                count="304"
+                count={booths.length > 0 ? booths : placeholder}
                 percentage={{
                   color: "success",
                   amount: "Urban : Rural =",
@@ -269,12 +290,12 @@ function Dashboard() {
               <ComplexStatisticsCard
                 color="primary"
                 icon="person_add"
-                title="Seat Status:Battleground"
-                count=""
+                title="Seat Status"
+                count={seatStatus.length > 0 ? seatStatus : placeholder}
                 percentage={{
                   color: "success",
                   amount: "Seat category:",
-                  label: "General",
+                  label: `${seatCategory}`,
                 }}
               />
             </MDBox>
