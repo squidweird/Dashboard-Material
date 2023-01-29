@@ -144,6 +144,10 @@ function Dashboard() {
   localStorage.setItem("candidateData", JSON.stringify(candidateData));
 
   useEffect(() => {
+    setSeatcategory("");
+    setSeatStatus("");
+    setBooths("");
+    setVoters("");
     fetchAssemblyFactorsData().catch(console.error);
     fetchCandidatesData().catch(console.error);
     fetchCasteData().catch(console.error);
@@ -233,8 +237,10 @@ function Dashboard() {
   return (
     <DashboardLayout>
       <DashboardNavbar />
-      <MDBox onClick={openMenu}>
-        <MDButton variant="button">Select Constituency</MDButton>
+      <MDBox>
+        <MDButton onClick={openMenu} variant="text" color="dark">
+          Select Constituency
+        </MDButton>
         <ArrowDropDownIcon fontSize="large" sx={{ verticalAlign: "middle" }} />
         {renderMenu}
       </MDBox>
